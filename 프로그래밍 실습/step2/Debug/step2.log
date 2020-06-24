@@ -1,3 +1,3 @@
 ﻿  소스.cpp
-C:\Users\gwon0\source\bank\프로그래밍 실습\step2\소스.cpp(226,6): warning C4551: 함수 호출에 인수 목록이 없습니다.
+C:\Users\gwon0\source\bank\프로그래밍 실습\step2\소스.cpp(231,6): warning C4551: 함수 호출에 인수 목록이 없습니다.
   step2.vcxproj -> C:\Users\gwon0\source\bank\프로그래밍 실습\Debug\step2.exe

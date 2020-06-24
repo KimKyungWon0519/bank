@@ -31,7 +31,7 @@ public:
 	char* getPersonalNumber(); //personalNumber 가져오기
 	
 private:
-	int accID;
+	int accID; 
 	int balance;
 	char* personalNumber;
 	char* cusName;
