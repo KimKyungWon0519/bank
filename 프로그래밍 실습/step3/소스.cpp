@@ -21,6 +21,7 @@ class Bank {
 
 public:
 	Bank();
+	Bank(const Bank& ref);
 	Bank(int id, int money, string number, string name); //맴버변수 초기화
 	int getAccID(); //Id 가져 오기
 	string getPersonalNumber(); //주민등록번호 가져오기
@@ -43,6 +44,12 @@ Bank::Bank(int id, int money, string number, string name)
 {
 	balance = money;
 	cusName = name;
+}
+
+Bank::Bank(const Bank& ref)
+	:accID(ref.accID), personalNumber(ref.personalNumber)
+{
+	cout << "copy construct" << endl;
 }
 
 int Bank::getAccID() {
@@ -87,7 +94,13 @@ public:
 	void deposit(); //계좌 입금
 	void withdrawal(); //계좌 출금
 	void viewAllInformation(); //계좌 전체 출력
+	~AccountManager();
 };
+
+AccountManager::~AccountManager() {
+	for (int i = 0; i < MAX_USER; i++)
+		delete account[i];
+}
 
 void AccountManager::createAccount() {
 	int id, money;
