@@ -38,76 +38,6 @@ public:
 	string getName(); // 사용자 이름 가져오기
 };
 
-NormalBank::NormalBank()
-	:accID(-1), personalNumber("")
-{
-	balance = -1;
-	cusName = "";
-	hadDepositBank = false;
-}
-
-NormalBank::NormalBank(int id, int money, string number, string name)
-	: accID(id), personalNumber(number)
-{
-	balance = money;
-	cusName = name;
-	hadDepositBank = false;
-}
-
-NormalBank::NormalBank(const NormalBank& ref)
-	:accID(ref.accID), personalNumber(ref.personalNumber)
-{
-	balance = ref.balance;
-	cusName = ref.cusName;
-	hadDepositBank = ref.hadDepositBank;
-}
-
-int NormalBank::getAccID() {
-	return accID;
-}
-
-string NormalBank::getPersonalNumber() {
-	return personalNumber;
-}
-
-void NormalBank::plusMoney(int money) {
-	int interest = 0;
-
-	balance += money;
-	interest = (double)(balance) * 0.01 ;
-	cout << "이자액 : " << interest << endl << endl;
-	balance += interest;
-}
-
-int NormalBank::getBalance() {
-	return balance;
-}
-
-void NormalBank::minusMoney(int money) {
-	balance -= money;
-}
-
-void NormalBank::printInformation() {
-	cout << "-------------------------------------------------" << endl << endl;
-	cout << "사용자 주민등록 번호 : " << personalNumber << endl;
-	cout << "사용자 이름 : " << cusName << endl << endl;
-	cout << "[보통 계좌]" << endl;
-	cout << "계좌 번호 : " << accID << endl;
-	cout << "계좌 금액 : " << balance << endl << endl << endl;;
-}
-
-bool NormalBank::getHadDepositBank() {
-	return hadDepositBank;
-}
-
-void NormalBank::setHadDepositBank(bool value) {
-	hadDepositBank = value;
-}
-
-string NormalBank::getName() {
-	return cusName;
-}
-
 class DepositBank : public NormalBank {
 public:
 	DepositBank(int newAccID, NormalBank newBank) : NormalBank(newAccID, 0, newBank.getPersonalNumber(), newBank.getName()) {} // 예금 계좌 생성
@@ -115,21 +45,6 @@ public:
 	void plusMoney(int money); // 입금
 	void printInformation(); //출력
 };
-
-void DepositBank::plusMoney(int money) {
-	int interest = 0;
-
-	balance += money;
-	interest = (double)(balance) * 0.01;
-	cout << "이자액 : " << interest << endl << endl;;
-	balance += interest;
-}
-
-void DepositBank::printInformation() {
-	cout << "[에금 계좌]" << endl;
-	cout << "계좌 번호 : " << accID << endl;
-	cout << "계좌 금액 : " << balance << endl << endl;
-}
 
 class AccountManager {
 	NormalBank* account[MAX_USER]; //배열 생성
@@ -150,6 +65,72 @@ public:
 	void viewAllInformation(); //계좌 전체 출력
 	~AccountManager();
 };
+
+void printMenu();
+void selectedInput(int& input);
+void chosenMenu(int input, AccountManager* accoutManger);
+
+int main() {
+	AccountManager accoutManger;
+	int input = 0;
+
+	while (true)
+	{
+		printMenu();
+		selectedInput(input);
+		chosenMenu(input, &accoutManger);
+	}
+}
+
+void printMenu() {
+	cout << "----Menu----" << endl;
+	cout << "1. 보통계좌 개설" << endl;
+	cout << "2. 예금계좌 개설" << endl;
+	cout << "3. 입    금" << endl;
+	cout << "4. 출    금" << endl;
+	cout << "5. 계좌정보 전체 출력" << endl;
+	cout << "6. 프로그램 종료" << endl;
+}
+
+void selectedInput(int& input) {
+	cout << "메뉴 선택 : ";
+	cin >> input;
+}
+
+void chosenMenu(int input, AccountManager* accoutManger) {
+	switch (input)
+	{
+	case CREATE_NORMAL:
+		cout << "\n[보통 개좌 개설]" << endl;
+		(*accoutManger).createNomalBank();
+		break;
+	case CREATE_DEPOSIT:
+		cout << "\n[예금 계좌 개설]" << endl;
+		(*accoutManger).createDepositBank();
+		break;
+	case PLUS:
+		cout << "\n[입    금]" << endl;
+		(*accoutManger).deposit();
+		break;
+	case MINUS:
+		cout << "\n[출    금]" << endl;
+		(*accoutManger).withdrawal();
+		break;
+	case ALLINFOF:
+		cout << "\n[전체 출력]" << endl << endl;;
+		(*accoutManger).viewAllInformation();
+		cout << "-------------------------------------------------\n" << endl;
+		break;
+	case EXIT:
+		cout << "프로그램을 종료합니다." << endl;
+		exit(0);
+		break;
+	default:
+		cout << "잘못된 번호를 입력하셨습니다." << endl;
+		printf("\n");
+		break;
+	}
+}
 
 AccountManager::~AccountManager() {
 	for (int i = 0; i < MAX_USER; i++)
@@ -198,7 +179,7 @@ void AccountManager::createDepositBank() {
 	if (isHadInformation()) {
 		inputInformation(accID, personalNumber);
 
-		if(accID <= 0) {
+		if (accID <= 0) {
 			cout << "ERROR : 계좌번호를 0보다 작은 값으로 입력을 하였습니다." << endl << endl;;
 			return;
 		}
@@ -348,68 +329,88 @@ void AccountManager::viewAllInformation() {
 		cout << "존재하는 계좌가 없음 " << endl;
 }
 
-void printMenu();
-void selectedInput(int& input);
-void chosenMenu(int input, AccountManager* accoutManger);
 
-int main() {
-	AccountManager accoutManger;
-	int input = 0;
-
-	while (true)
-	{
-		printMenu();
-		selectedInput(input);
-		chosenMenu(input, &accoutManger);
-	}
+NormalBank::NormalBank()
+	:accID(-1), personalNumber("")
+{
+	balance = -1;
+	cusName = "";
+	hadDepositBank = false;
 }
 
-void printMenu() {
-	cout << "----Menu----" << endl;
-	cout << "1. 보통계좌 개설" << endl;
-	cout << "2. 예금계좌 개설" << endl;
-	cout << "3. 입    금" << endl;
-	cout << "4. 출    금" << endl;
-	cout << "5. 계좌정보 전체 출력" << endl;
-	cout << "6. 프로그램 종료" << endl;
+NormalBank::NormalBank(int id, int money, string number, string name)
+	: accID(id), personalNumber(number)
+{
+	balance = money;
+	cusName = name;
+	hadDepositBank = false;
 }
 
-void selectedInput(int& input) {
-	cout << "메뉴 선택 : ";
-	cin >> input;
+NormalBank::NormalBank(const NormalBank& ref)
+	:accID(ref.accID), personalNumber(ref.personalNumber)
+{
+	balance = ref.balance;
+	cusName = ref.cusName;
+	hadDepositBank = ref.hadDepositBank;
 }
 
-void chosenMenu(int input, AccountManager* accoutManger) {
-	switch (input)
-	{
-	case CREATE_NORMAL:
-		cout << "\n[보통 개좌 개설]" << endl;
-		(*accoutManger).createNomalBank();
-		break;
-	case CREATE_DEPOSIT:
-		cout << "\n[예금 계좌 개설]" << endl;
-		(*accoutManger).createDepositBank();
-		break;
-	case PLUS:
-		cout << "\n[입    금]" << endl;
-		(*accoutManger).deposit();
-		break;
-	case MINUS:
-		cout << "\n[출    금]" << endl;
-		(*accoutManger).withdrawal();
-		break;
-	case ALLINFOF:
-		cout << "\n[전체 출력]" << endl << endl;;
-		(*accoutManger).viewAllInformation();
-		cout << "-------------------------------------------------\n" << endl;
-		break;
-	case EXIT:
-		cout << "프로그램을 종료합니다." << endl;
-		exit(0);
-		break;
-	default:
-		cout << "잘못된 번호를 입력하셨습니다." << endl;
-		printf("\n");
-		break;
-	}
+int NormalBank::getAccID() {
+	return accID;
+}
+
+string NormalBank::getPersonalNumber() {
+	return personalNumber;
+}
+
+void NormalBank::plusMoney(int money) {
+	int interest = 0;
+
+	balance += money;
+	interest = (double)(balance) * 0.01;
+	cout << "이자액 : " << interest << endl << endl;
+	balance += interest;
+}
+
+int NormalBank::getBalance() {
+	return balance;
+}
+
+void NormalBank::minusMoney(int money) {
+	balance -= money;
+}
+
+void NormalBank::printInformation() {
+	cout << "-------------------------------------------------" << endl << endl;
+	cout << "사용자 주민등록 번호 : " << personalNumber << endl;
+	cout << "사용자 이름 : " << cusName << endl << endl;
+	cout << "[보통 계좌]" << endl;
+	cout << "계좌 번호 : " << accID << endl;
+	cout << "계좌 금액 : " << balance << endl << endl << endl;;
+}
+
+bool NormalBank::getHadDepositBank() {
+	return hadDepositBank;
+}
+
+void NormalBank::setHadDepositBank(bool value) {
+	hadDepositBank = value;
+}
+
+string NormalBank::getName() {
+	return cusName;
+}
+
+void DepositBank::plusMoney(int money) {
+	int interest = 0;
+
+	balance += money;
+	interest = (double)(balance) * 0.01;
+	cout << "이자액 : " << interest << endl << endl;;
+	balance += interest;
+}
+
+void DepositBank::printInformation() {
+	cout << "[에금 계좌]" << endl;
+	cout << "계좌 번호 : " << accID << endl;
+	cout << "계좌 금액 : " << balance << endl << endl;
 }
